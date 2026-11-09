@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الفرنسية مع تسنيم</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#fff8fc;color:#342746}
+header{background:linear-gradient(135deg,#8b5cf6,#ec4899);color:white;text-align:center;padding:28px 15px;border-radius:0 0 28px 28px}
+header h1{margin:5px;font-size:27px}
+header p{margin:8px}
+nav{display:flex;gap:8px;overflow:auto;padding:12px;background:white;position:sticky;top:0;z-index:5}
+nav button{border:0;border-radius:20px;padding:10px 15px;background:#f3e8ff;color:#7135a6;font-weight:bold;white-space:nowrap}
+nav button.active{background:#8b5cf6;color:white}
+main{max-width:750px;margin:auto;padding:16px}
+.card{background:white;border-radius:20px;padding:18px;margin:14px 0;box-shadow:0 4px 15px #6b287414}
+h2{color:#8b45c7}
+h3{margin-bottom:8px}
+.pink{color:#df398f;font-weight:bold}
+button.action{background:#ec4899;color:white;border:0;padding:11px 17px;border-radius:12px;margin:5px;cursor:pointer;font-weight:bold}
+button.purple{background:#8b5cf6}
+button:disabled{opacity:.5}
+select{padding:10px;border-radius:10px;border:1px solid #ddd;width:100%;margin:8px 0}
+.word{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid #f1e8f4;padding:12px 0}
+.word strong{color:#813cc1;font-size:18px}
+.small{font-size:13px;color:#777}
+.page{display:none}
+.page.active{display:block}
+.answer{display:block;width:100%;text-align:right;padding:12px;margin:8px 0;border:1px solid #e6d8ee;border-radius:12px;background:#fff}
+#result{font-weight:bold;color:#8b45c7;margin-top:12px}
+footer{text-align:center;padding:25px;color:#997eaa}
+</style>
+</head>
+<body>
+<header>
+<div style="font-size:35px">🌸📚</div>
+<h1>الفرنسية مع تسنيم</h1>
+<p>تعلمي الفرنسية خطوة بخطوة وبكل حب</p>
+<div>🇫🇷 Bonjour ! Bienvenue !</div>
+</header>
+
+<nav>
+<button class="active" onclick="showPage('home',this)">الرئيسية</button>
+<button onclick="showPage('lessons',this)">الدروس</button>
+<button onclick="showPage('words',this)">الكلمات</button>
+<button onclick="showPage('quiz',this)">الاختبارات</button>
+<button onclick="showPage('speak',this)">التحدث</button>
+</nav>
+
+<main>
+<section id="home" class="page active">
+<div class="card">
+<h2>مرحباً بكِ في عالم الفرنسية 💜</h2>
+<p>هنا ستتعلمين اللغة الفرنسية من الصفر حتى المستويات المتقدمة.</p>
+<p class="pink">كل يوم خطوة جديدة نحو الطلاقة!</p>
+<button class="action" onclick="showPage('lessons',document.querySelectorAll('nav button')[1])">ابدئي التعلم</button>
+</div>
+<div class="card">
+<h2>🌟 ماذا ستتعلمين؟</h2>
+<p>📖 قواعد ومحادثات فرنسية.</p>
+<p>🔊 الاستماع إلى النطق الصحيح.</p>
+<p>✍️ اختبارات وتمارين.</p>
+<p>🎙️ التدريب على نطق الكلمات بصوتك.</p>
+</div>
+<div class="card">
+<h2>💬 كلمة اليوم</h2>
+<h2 style="text-align:center">Bonjour</h2>
+<p style="text-align:center">مرحباً / صباح الخير</p>
+<button class="action purple" onclick="speak('Bonjour')">🔊 استمعي إلى النطق</button>
+</div>
+</section>
+
+<section id="lessons" class="page">
+<div class="card">
+<h2>📚 دروس اللغة الفرنسية</h2>
+<label>اختاري المستوى:</label>
+<select id="level" onchange="loadLessons()">
+<option value="beginner">المبتدئ A1</option>
+<option value="elementary">الأساسي A2</option>
+<option value="intermediate">المتوسط B1</option>
+<option value="advanced">المتقدم B2</option>
+</select>
+<div id="lessonList"></div>
+</div>
+</section>
+
+<section id="words" class="page">
+<div class="card">
+<h2>📖 قاموس الكلمات</h2>
+<p>استمعي إلى الكلمات وتعلمي معناها.</p>
+<div id="wordList"></div>
+</div>
+</section>
+
+<section id="quiz" class="page">
+<div class="card">
+<h2>📝 اختبري معلوماتك</h2>
+<p id="question"></p>
+<div id="answers"></div>
+<div id="result"></div>
+<button class="action" onclick="nextQuestion()">السؤال التالي</button>
+</div>
+</section>
+
+<section id="speak" class="page">
+<div class="card">
+<h2>🎙️ تدربي على التحدث</h2>
+<p>اكتبي جملة بالفرنسية ثم استمعي إلى نطقها.</p>
+<input id="sentence" value="Je m'appelle Tassnim." style="width:100%;padding:13px;border:1px solid #ddd;border-radius:10px">
+<button class="action purple" onclick="speak(document.getElementById('sentence').value)">🔊 استمعي</button>
+<hr>
+<h3>🎤 سجلي صوتك</h3>
+<p class="small">اضغطي على بدء التسجيل واسمحي للمتصفح باستعمال الميكروفون.</p>
+<button class="action" id="record" onclick="startRecording()">بدء التسجيل</button>
+<button class="action purple" onclick="stopRecording()">إيقاف التسجيل</button>
+<p id="recordStatus">لم يبدأ التسجيل بعد.</p>
+<audio id="playback" controls style="width:100%;display:none"></audio>
+</div>
+</section>
+</main>
+<footer>صُنع بحب ❤️ الفرنسية مع تسنيم</footer>
+
+<script>
+const lessons={
+beginner:[
+["التحية","Bonjour","مرحباً / صباح الخير","Bonsoir","مساء الخير","Merci","شكراً"],
+["التعارف","Je m'appelle Sara.","اسمي سارة","Comment tu t'appelles ?","ما اسمك؟","Enchanté(e)","تشرفت بمعرفتك"],
+["الأرقام","Un - Deux - Trois","واحد - اثنان - ثلاثة","Quatre - Cinq","أربعة - خمسة","Six - Sept","ستة - سبعة"]
+],
+elementary:[
+["العائلة","Ma famille","عائلتي","Mon père","أبي","Ma mère","أمي"],
+["الحياة اليومية","Je me réveille.","أستيقظ","Je prends le petit déjeuner.","أتناول الفطور","Je vais à l'école.","أذهب إلى المدرسة"]
+],
+intermediate:[
+["الماضي","Hier, j'ai étudié.","درست أمس","J'ai visité Paris.","زرت باريس","Nous avons travaillé.","عملنا"],
+["المستقبل","Demain, je voyagerai.","سأسافر غداً","Je vais apprendre.","سوف أتعلم","Nous partirons bientôt.","سنغادر قريباً"]
+],
+advanced:[
+["إبداء الرأي","À mon avis...","في رأيي","Je suis convaincu(e) que...","أنا مقتنع بأن","Il est essentiel de...","من الضروري أن"]
+]
+};
+const words=[
+["Bonjour","مرحباً"],["Merci","شكراً"],["S'il vous plaît","من فضلك"],["Au revoir","إلى اللقاء"],["Amour","حب"],["École","مدرسة"],["Livre","كتاب"],["Maison","منزل"],["Ami","صديق"],["Eau","ماء"],["Famille","عائلة"],["Travail","عمل"]
+];
+function showPage(id,btn){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+if(btn)btn.classList.add('active');
+}
+function speak(t){
+if(!('speechSynthesis' in window)){alert('النطق الصوتي غير مدعوم في هذا المتصفح');return}
+speechSynthesis.cancel();
+let u=new SpeechSynthesisUtterance(t);
+u.lang='fr-FR';u.rate=.85;
+let voices=speechSynthesis.getVoices();
+let v=voices.find(x=>x.lang==='fr-FR')||voices.find(x=>x.lang.startsWith('fr'));
+if(v)u.voice=v;
+speechSynthesis.speak(u);
+}
+function loadLessons(){
+let data=lessons[document.getElementById('level').value];
+document.getElementById('lessonList').innerHTML=data.map((l,i)=>`
+<div class="card"><h3>${i+1}. ${l[0]}</h3>
+${[1,3,5].map((n)=>`<div class="word"><div><strong>${l[n]}</strong><br><span>${l[n+1]}</span></div><button class="action purple" onclick="speak('${l[n].replace(/'/g,"\\'")}')">🔊</button></div>`).join('')}
+</div>`).join('');
+}
+document.getElementById('wordList').innerHTML=words.map(w=>`
+<div class="word"><div><strong>${w[0]}</strong><br>${w[1]}</div><button class="action purple" onclick="speak('${w[0]}')">🔊</button></div>`).join('');
+
+const questions=[
+{q:"ما معنى Bonjour؟",a:["شكراً","مرحباً","إلى اللقاء"],c:1},
+{q:"كيف نقول شكراً بالفرنسية؟",a:["Merci","Bonsoir","Maison"],c:0},
+{q:"ما معنى Livre؟",a:["مدرسة","منزل","كتاب"],c:2},
+{q:"كيف نقول مساء الخير؟",a:["Bonjour","Bonsoir","Au revoir"],c:1},
+{q:"ما معنى Famille؟",a:["عائلة","صديق","ماء"],c:0}
+];
+let qi=0,score=0,answered=false;
+function nextQuestion(){
+answered=false;
+let q=questions[qi%questions.length];
+document.getElementById('question').textContent=q.q;
+document.getElementById('result').textContent='';
+document.getElementById('answers').innerHTML=q.a.map((a,i)=>`<button class="answer" onclick="checkAnswer(${i})">${a}</button>`).join('');
+}
+function checkAnswer(i){
+if(answered)return;
+answered=true;
+let q=questions[qi%questions.length];
+if(i===q.c){score++;document.getElementById('result').textContent='أحسنتِ! إجابة صحيحة 🌟'}
+else document.getElementById('result').textContent='حاولي مرة أخرى. الإجابة الصحيحة: '+q.a[q.c];
+qi++;
+}
+let recorder, chunks=[];
+async function startRecording(){
+try{
+let stream=await navigator.mediaDevices.getUserMedia({audio:true});
+chunks=[];
+recorder=new MediaRecorder(stream);
+recorder.ondataavailable=e=>chunks.push(e.data);
+recorder.onstop=()=>{
+let blob=new Blob(chunks,{type:recorder.mimeType});
+let url=URL.createObjectURL(blob);
+let audio=document.getElementById('playback');
+audio.src=url;audio.style.display='block';
+stream.getTracks().forEach(t=>t.stop());
+};
+recorder.start();
+document.getElementById('recordStatus').textContent='🔴 جارٍ التسجيل...';
+}catch(e){document.getElementById('recordStatus').textContent='لم نتمكن من استخدام الميكروفون. تحققي من إذن المتصفح.'}
+}
+function stopRecording(){
+if(recorder&&recorder.state==='recording'){
+recorder.stop();
+document.getElementById('recordStatus').textContent='تم التسجيل! يمكنك الاستماع إلى صوتك بالأسفل.';
+}
+}
+loadLessons();
+nextQuestion();
+</script>
+</body>
+</html>
